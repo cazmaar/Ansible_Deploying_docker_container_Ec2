@@ -1,0 +1,65 @@
+---
+- name: Install python 3 on ec2_server
+  hosts: ec2_server
+  become: yes
+  tasks:
+    - name: Update yum repository
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      ansible.builtin.yum:
+        update_cache: yes
+    - name: Make sure python3 is installed
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      ansible.builtin.yum:
+        name: python3
+        state: present
+
+
+- name: Install docker on ec2 instance
+  hosts: ec2_server
+  become: yes
+  tasks:
+  - name: Update yum repository
+    vars:
+      ansible_python_interpreter: /usr/bin/python
+    ansible.builtin.yum:
+      update_cache: yes
+  - name: Install docker
+    vars:
+      ansible_python_interpreter: /usr/bin/python
+    ansible.builtin.yum:
+      name: docker
+      state: present
+  - name: Ensured docker is running
+    ansible.builtin.systemd: #this is a module for system controll
+      name: docker
+      state: started
+
+
+- name: Add ec2_user to docker group
+  hosts: ec2_server
+  become: yes
+  tasks:
+    - name: Add ec2_user to docker group
+      ansible.builtin.user:
+        name: ec2-user
+        groups:
+          - docker
+        append: yes
+    - name: Reconnect to server after creating a new group
+      ansible.builtin.meta: reset_connection
+
+
+# you can't install docker compose using yum. 
+- name: Install docker compose
+  hosts: ec2_server
+  become: yes
+  tasks:
+    - name: Install docker compose
+      ansible.builtin.get_url: #allows you fetch something from the internet. you can also set the destination and mode with get_url
+        url: https://github.com/docker/compose/releases/latest/download/docker-compose-Linux-x86_64 #{{lookup('pipe','uname -m')}}
+        dest: /usr/local/bin/docker-compose
+        mode: +x
+
+

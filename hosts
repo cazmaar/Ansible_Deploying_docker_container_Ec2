@@ -1,0 +1,7 @@
+[ec2_server]
+18.130.209.71
+
+[ec2_server:vars]
+ansible_private_key_file=~/.ssh/Jenkins_server.pem   
+ansible_user=ec2-user
+interpreter_python = /usr/bin/python3
