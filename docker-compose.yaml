@@ -1,0 +1,8 @@
+version: '3'
+services:
+  postgres:
+    image: cazmaars/docker:dr-1.2
+    ports:
+      - 4007:3000
+
+

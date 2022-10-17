@@ -18,6 +18,13 @@ resource "aws_security_group" "allow_tls" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  ingress {
+    description = "APP PORT INTO INSTANCE"
+    from_port   = 4007
+    to_port     = 4007
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     description     = "APP PORT INTO INSTANCE"

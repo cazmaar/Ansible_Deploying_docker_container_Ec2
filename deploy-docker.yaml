@@ -2,6 +2,7 @@
 - name: Install python 3 on ec2_server
   hosts: ec2_server
   become: yes
+  gather_facts: false
   tasks:
     - name: Update yum repository
       vars:
@@ -10,14 +11,15 @@
         update_cache: yes
     - name: Make sure python3 is installed
       vars:
-        ansible_python_interpreter: /usr/bin/python
+        ansible_python_interpreter: /usr/bin/python #any  execution of yum uses python2. So had to change it from python 3.
       ansible.builtin.yum:
         name: python3
         state: present
-    - name: Install python module docker #installing python module with pip because ansible depends on it for docker.
+    - name: Install python module docker #installing python module with pip because ansible depends on it for docker and docker-compose.
       ansible.builtin.pip:
         name:
           - docker
+          - docker-compose
 
 
 - name: Install docker on ec2 instance
@@ -66,12 +68,26 @@
         dest: /usr/local/bin/docker-compose
         mode: +x
 
-- name: Pulling a redis image
+- name: Deploy App on the Server
   hosts: ec2_server
+  # vars_prompt: #you can use prompt to get your enviromental variables instead of a variables file
+  #   - name: password #you can use prompt to get your enviromental variables instead of a variables file
+  #     prompt: Enter password for docker registry #you can use prompt to get your enviromental variables instead of a variables file
+  vars_files:
+    - variables-ansible
   tasks:
-    - name: Ensure redis image is pulled
-      community.docker.docker_image:
-        name: redis
-        source: pull
+    - name: Copy docker compose file.
+      ansible.builtin.copy:
+        src: ~/Desktop/DevOps/13. Ansible/Ansible_Automating_Deployment_EC2/docker-compose.yaml
+        dest: /home/ec2-user/docker-compose.yaml
+    - name: Log into DockerHub
+      community.docker.docker_login:
+        username: cazmaars
+        password: "{{password}}"
+    - name: Start Container Using docker compose
+      community.docker.docker_compose:
+        project_src: /home/ec2-user
+        state: present
+        
 
 
