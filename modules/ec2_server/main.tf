@@ -64,10 +64,18 @@ resource "aws_instance" "dev-ec2-instance" {
   tags = {
     "Name" = "${var.env_prefix}-server"
   }
+#self.public_ip for when you want to use a value in itself
+}
 
+#since we are not provisioning a server its better to use null resource.
+
+resource "null_resource" "configure_server" {
   provisioner "local-exec" {  #provisioners are used to execute commands in terraform
+  # triggers={ #a trigger  to trigger when this should be executed
+  #   trigger=aws_instance.dev-ec2-instance.public_ip
+  # }
     #local exec - is for running it locally on my machine.
     # working_dir = if it is in a different directory you have to switch to that directory.
-    command = "ansible-playbook -u ec2-user --inventory ${self.public_ip}, --private-key ${var.private_key_location} deploy-docker.yaml" #automatically running ansible after terraform is done provisioning server using provisioner.
+    command = "ansible-playbook -u ec2-user --inventory ${aws_instance.dev-ec2-instance.public_ip}, --private-key ${var.private_key_location} deploy-docker.yaml" #automatically running ansible after terraform is done provisioning server using provisioner.
   }
 }

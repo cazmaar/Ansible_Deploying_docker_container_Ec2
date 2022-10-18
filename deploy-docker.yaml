@@ -1,4 +1,23 @@
 ---
+- name: Wait for server to be ready before ssh connection.
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Ensure ssh port is open
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      ansible.builtin.wait_for:   #waits for ssh connection before executing next tasks
+        port: 22 #waits until port 22 is open
+        delay: 10 #delay for 10sec before checking if port 22 is open
+        timeout: 100
+        search_regex: OpenSSH
+        host: "{{(ansible_ssh_host|default(ansible_host))|default(inventory_hostname)}}" #defines which host you want to connect to. I don't wamt to hard code it. so passing it down from the host in line 4.
+      vars:
+        ansible_connection: local #means we want to execute this locally.
+
+        
+  
+
 - name: Install python 3 on ec2_server
   hosts: all #changed to all so it can accept the dynamic IP from terraform
   become: yes
