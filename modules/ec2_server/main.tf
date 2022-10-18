@@ -8,7 +8,7 @@ resource "aws_security_group" "allow_tls" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.my_ip]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -63,5 +63,11 @@ resource "aws_instance" "dev-ec2-instance" {
   key_name                    = var.key_name
   tags = {
     "Name" = "${var.env_prefix}-server"
+  }
+
+  provisioner "local-exec" {  #provisioners are used to execute commands in terraform
+    #local exec - is for running it locally on my machine.
+    # working_dir = if it is in a different directory you have to switch to that directory.
+    command = "ansible-playbook -u ec2-user --inventory ${self.public_ip}, --private-key ${var.private_key_location} deploy-docker.yaml" #automatically running ansible after terraform is done provisioning server using provisioner.
   }
 }

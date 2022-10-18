@@ -1,5 +1,5 @@
 [ec2_server]
-18.168.149.168
+13.42.42.148
 
 [ec2_server:vars]
 ansible_private_key_file=~/.ssh/Jenkins_server.pem   

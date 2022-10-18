@@ -39,4 +39,5 @@ module "ec2_instance" {
   subnet_id = module.my-app-subnet.subnet.id
   availability_zone = var.availability_zone
   key_name = var.key_pair
+  private_key_location = var.private_key_location
 }

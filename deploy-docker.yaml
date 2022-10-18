@@ -1,6 +1,6 @@
 ---
 - name: Install python 3 on ec2_server
-  hosts: ec2_server
+  hosts: all #changed to all so it can accept the dynamic IP from terraform
   become: yes
   gather_facts: false
   tasks:
@@ -23,7 +23,7 @@
 
 
 - name: Install docker on ec2 instance
-  hosts: ec2_server
+  hosts: all
   become: yes
   tasks:
   - name: Update yum repository
@@ -44,7 +44,7 @@
 
 
 - name: Add ec2_user to docker group
-  hosts: ec2_server
+  hosts: all
   become: yes
   tasks:
     - name: Add ec2_user to docker group
@@ -59,7 +59,7 @@
 
 # you can't install docker compose using yum. 
 - name: Install docker compose
-  hosts: ec2_server
+  hosts: all
   become: yes
   tasks:
     - name: Install docker compose
@@ -69,7 +69,7 @@
         mode: +x
 
 - name: Deploy App on the Server
-  hosts: ec2_server
+  hosts: all
   # vars_prompt: #you can use prompt to get your enviromental variables instead of a variables file
   #   - name: password #you can use prompt to get your enviromental variables instead of a variables file
   #     prompt: Enter password for docker registry #you can use prompt to get your enviromental variables instead of a variables file

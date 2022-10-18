@@ -5,3 +5,4 @@ variable "instance_type" {}
 variable "subnet_id" {}
 variable "availability_zone" {}
 variable "key_name" {}
+variable "private_key_location" {}
