@@ -63,6 +63,7 @@ resource "aws_instance" "dev-ec2-instance" {
   key_name                    = var.key_name
   tags = {
     "Name" = "${var.env_prefix}-server"
+    # yh
   }
 #self.public_ip for when you want to use a value in itself
 }
